@@ -163,6 +163,7 @@ contract FlightSuretyData {
                                 string name
                             )
                             external
+                            requireIsOperational
                             isRegisteredAirline
                             isFundingAirline
     {
@@ -199,6 +200,7 @@ contract FlightSuretyData {
                                 string flight,
                                 address airlineAddress                         
                             )
+                            requireIsOperational
                             external
                             payable
     {
@@ -215,6 +217,7 @@ contract FlightSuretyData {
                                 (
                                     string flight
                                 )
+                                requireIsOperational
                                 external
     {
         for (uint256 idx = 0; idx < insurances[flight].length; idx++) {
@@ -239,9 +242,12 @@ contract FlightSuretyData {
                             (
                             )
                             external
+                            requireIsOperational
     {
         require(insureeCredits[msg.sender] != 0, "Caller doesn't have any credits");
-        
+        uint amount = insureeCredits[msg.sender];
+        insureeCredits[msg.sender] = 0;
+        msg.sender.transfer(amount);
     }
 
    /**
@@ -254,6 +260,7 @@ contract FlightSuretyData {
                             )
                             public
                             payable
+                            requireIsOperational
                             isRegisteredAirline
     {
         require(!airlines[msg.sender].providedFunds, 'Caller already provided funds');
