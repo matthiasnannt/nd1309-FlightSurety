@@ -12,9 +12,9 @@ contract("Flight Surety Tests", async (accounts) => {
 
   before("setup contract", async () => {
     config = await Test.Config(accounts);
-    /* await config.flightSuretyData.authorizeCaller(
+    await config.flightSuretyData.authorizeCaller(
       config.flightSuretyApp.address
-    ); */
+    );
   });
 
   /****************************************************************************************/

@@ -11,6 +11,7 @@ contract FlightSuretyData {
 
     address private contractOwner;                                      // Account used to deploy contract
     bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+    mapping(address => uint256) authorizedCallers;
     
     struct Airline {
         string name;
@@ -68,6 +69,15 @@ contract FlightSuretyData {
     }
 
     /**
+    * @dev Modifier that requires the caller to be in the list of authorized addresses
+    */
+    modifier isCallerAuthorized() 
+    {
+        require(authorizedCallers[msg.sender] == 1, "Caller is not authorized");
+        _;
+    }
+
+    /**
     * @dev Modifier that requires the "ContractOwner" account to be the function caller
     */
     modifier requireContractOwner()
@@ -120,6 +130,33 @@ contract FlightSuretyData {
     {
         operational = mode;
     }
+
+    /**
+    * @dev Authorize a caller
+    */    
+    function authorizeCaller
+                            (
+                                address callerAddress
+                            ) 
+                            external
+                            requireContractOwner 
+    {
+        authorizedCallers[callerAddress] = 1;
+    }
+
+    /**
+    * @dev Deauthorize a caller
+    */    
+    function deauthorizeCaller
+                            (
+                                address callerAddress
+                            ) 
+                            external
+                            requireContractOwner 
+    {
+        authorizedCallers[callerAddress] = 0;
+    }
+
 
     /**
     * @dev Check if address is airline
@@ -218,6 +255,7 @@ contract FlightSuretyData {
                                     string flight
                                 )
                                 requireIsOperational
+                                isCallerAuthorized
                                 external
     {
         for (uint256 idx = 0; idx < insurances[flight].length; idx++) {
