@@ -26,6 +26,8 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract
 
+    FlightSuretyDataInterface fsData;
+
     struct Flight {
         bool isRegistered;
         uint8 statusCode;
@@ -47,7 +49,7 @@ contract FlightSuretyApp {
     *      This is used on all state changing functions to pause the contract in 
     *      the event there is an issue that needs to be fixed
     */
-    modifier requireIsOperational() 
+    modifier requireIsOperational()
     {
          // Modify to call data contract's status
         require(true, "Contract is currently not operational");  
@@ -73,10 +75,12 @@ contract FlightSuretyApp {
     */
     constructor
                                 (
+                                    address dataContract
                                 ) 
                                 public 
     {
         contractOwner = msg.sender;
+        fsData = FlightSuretyDataInterface(dataContract);
     }
 
     /********************************************************************************************/
@@ -85,16 +89,15 @@ contract FlightSuretyApp {
 
     function isOperational() 
                             public 
-                            pure 
+                            view 
                             returns(bool) 
     {
-        return true;  // Modify to call data contract's status
+        return fsData.isOperational();  // Modify to call data contract's status
     }
 
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
-
   
    /**
     * @dev Add an airline to the registration queue
@@ -102,11 +105,14 @@ contract FlightSuretyApp {
     */   
     function registerAirline
                             (   
+                                address airlineAddress,
+                                string name
                             )
                             external
-                            pure
+                            requireIsOperational
                             returns(bool success, uint256 votes)
     {
+        fsData.registerAirline(airlineAddress, name);
         return (success, 0);
     }
 
@@ -120,6 +126,7 @@ contract FlightSuretyApp {
                                 )
                                 external
                                 pure
+                                requireIsOperational
     {
 
     }
@@ -136,8 +143,11 @@ contract FlightSuretyApp {
                                     uint8 statusCode
                                 )
                                 internal
-                                pure
+                                requireIsOperational
     {
+        if (statusCode == STATUS_CODE_LATE_AIRLINE) {
+            fsData.creditInsurees(flight);
+        }
     }
 
 
@@ -149,6 +159,7 @@ contract FlightSuretyApp {
                             uint256 timestamp                            
                         )
                         external
+                        requireIsOperational
     {
         uint8 index = getRandomIndex(msg.sender);
 
@@ -334,4 +345,22 @@ contract FlightSuretyApp {
 
 // endregion
 
-}   
+}  
+
+contract FlightSuretyDataInterface {
+    function registerAirline
+                            (
+                                address airlineAddress,
+                                string name
+                            )
+                            external;
+    function isOperational()
+                            public
+                            view
+                            returns(bool);
+    function creditInsurees
+                                (
+                                    string flight
+                                )
+                                external;
+}

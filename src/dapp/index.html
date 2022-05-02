@@ -33,9 +33,33 @@
     <main class="container">
       <div id="display-wrapper" class="top-20"></div>
       <div class="row top-20">
-        <label class="form">Flight</label>
-        <input type="text" id="flight-number" />
+        <label class="form">Flight Information</label>
+      </div>
+      <div class="row">
+        <select name="pets" id="oracle-flight-number">
+          <option value="0">New York -> Tokiyo (2.05, 4:25)</option>
+          <option value="1">Porto -> Brussels (3.05, 20:45)</option>
+          <option value="2">Sofia -> Helsinki (4.05, 04:15)</option>
+          <option value="3">Hamburg -> Munich (5.05, 15:00)</option>
+          <option value="4">Berlin -> Amsterdam (6.05, 21:50)</option>
+        </select>
         <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+      </div>
+      <div class="row top-20">
+        <label class="form">Buy Insurance</label>
+      </div>
+      <div class="row">
+        <input type="text" id="airline-address" placeholder="Airline Address" />
+        <input type="text" id="insuree-address" placeholder="Insuree Address" />
+        <input type="number" id="amount" placeholder="Amount in Eth" />
+        <select name="pets" id="flight-number">
+          <option value="0">New York -> Tokiyo (2.05, 4:25)</option>
+          <option value="1">Porto -> Brussels (3.05, 20:45)</option>
+          <option value="2">Sofia -> Helsinki (4.05, 04:15)</option>
+          <option value="3">Hamburg -> Munich (5.05, 15:00)</option>
+          <option value="4">Berlin -> Amsterdam (6.05, 21:50)</option>
+        </select>
+        <btn class="btn btn-primary" id="buy-insurance">Buy</btn>
       </div>
     </main>
   </body>
